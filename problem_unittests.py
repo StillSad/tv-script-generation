@@ -196,7 +196,7 @@ def test_get_embed(get_embed):
         test_embed_dim = embed_shape[2]
 
         embed = get_embed(test_input_data, test_vocab_size, test_embed_dim)
-        print(embed.shape)
+
         # Check shape
         assert embed.shape == embed_shape,\
             'Wrong shape.  Found shape {}'.format(embed.shape)
@@ -282,7 +282,7 @@ def test_pick_word(pick_word):
     with tf.Graph().as_default():
         test_probabilities = np.array([0.1, 0.8, 0.05, 0.05])
         test_int_to_vocab = {word_i: word for word_i, word in enumerate(['this', 'is', 'a', 'test'])}
-        print(test_int_to_vocab.values()
+
         pred_word = pick_word(test_probabilities, test_int_to_vocab)
 
         # Check type
