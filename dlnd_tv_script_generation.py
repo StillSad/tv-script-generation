@@ -62,7 +62,7 @@ print('\n'.join(text.split('\n')[view_sentence_range[0]:view_sentence_range[1]])
 # 
 # Return these dictionaries in the following tuple `(vocab_to_int, int_to_vocab)`
 
-# In[3]:
+# In[19]:
 
 
 import numpy as np
@@ -75,10 +75,9 @@ def create_lookup_tables(text):
     :return: A tuple of dicts (vocab_to_int, int_to_vocab)
     """
     # TODO: Implement Function
-    counts = Counter(text)
-    vocab = sorted(counts,key = counts.get,reverse=True)
-    int_to_vocab = {ii : word for ii ,word in enumerate(vocab,1)}
-    vocab_to_int = {ii:word for word,ii in int_to_vocab.items()}
+    vocab = set(text)
+    int_to_vocab = {ii : word for ii ,word in enumerate(vocab,0)}
+    vocab_to_int = {word : ii for ii ,word in enumerate(vocab,0)}
     
     return vocab_to_int,int_to_vocab
 
@@ -106,22 +105,24 @@ tests.test_create_lookup_tables(create_lookup_tables)
 # 
 # This dictionary will be used to token the symbols and add the delimiter (space) around it.  This separates the symbols as it's own word, making it easier for the neural network to predict on the next word. Make sure you don't use a token that could be confused as a word. Instead of using the token "dash", try using something like "||dash||".
 
-# In[4]:
+# In[20]:
 
 
 def token_lookup():
     
-    keys = ['.', ',', '"', ';', '!', '?', '(', ')', '--', '\n']
-    values = ["Period", 'Comma', 'Quotation_Mar', 'Semicolon', 'Exclamation_mark',
-                  'Question_mark', 'Left_Parentheses', 'Right_Parentheses', 'Dash', 'Return']
-    """
-    Generate a dict to turn punctuation into a token.
-    :return: Tokenize dictionary where the key is the punctuation and the value is the token
-    """
-    dictionary = {key : value for key,value in zip(keys,values)}
+    res_dict = {'.':'||Period||',
+               ',':'||Comma||',
+               '"':'||QuotationMark||',
+               ';':'||Semicolon||',
+               '!':'||ExclamationMark||',
+               '?':'||QuestionMark||',
+               '(':'||LeftParentheses||',
+               ')':'||RightParentheses||',
+               '--':'||Dash||',
+               '\n':'||Return||'}
         
     # TODO: Implement Function
-    return dictionary
+    return res_dict
 
 """
 DON'T MODIFY ANYTHING IN THIS CELL THAT IS BELOW THIS LINE
@@ -132,7 +133,7 @@ tests.test_tokenize(token_lookup)
 # ## Preprocess all the data and save it
 # Running the code cell below will preprocess all the data and save it to file.
 
-# In[5]:
+# In[21]:
 
 
 """
@@ -145,7 +146,7 @@ helper.preprocess_and_save_data(data_dir, token_lookup, create_lookup_tables)
 # # Check Point
 # This is your first checkpoint. If you ever decide to come back to this notebook or have to restart the notebook, you can start from here. The preprocessed data has been saved to disk.
 
-# In[6]:
+# In[22]:
 
 
 """
@@ -169,7 +170,7 @@ int_text, vocab_to_int, int_to_vocab, token_dict = helper.load_preprocess()
 # 
 # ### Check the Version of TensorFlow and Access to GPU
 
-# In[7]:
+# In[23]:
 
 
 """
@@ -198,7 +199,7 @@ else:
 # 
 # Return the placeholders in the following tuple `(Input, Targets, LearningRate)`
 
-# In[8]:
+# In[24]:
 
 
 def get_inputs():
@@ -208,7 +209,7 @@ def get_inputs():
     """
     inputs = tf.placeholder(tf.int32,[None,None],name='input')
     targets = tf.placeholder(tf.int32,[None,None],name='targets')
-    learningRrate = tf.placeholder(tf.int32,name='learning_rate')
+    learningRrate = tf.placeholder(tf.float32,name='learning_rate')
     # TODO: Implement Function
     return inputs, targets, learningRrate
 
@@ -227,18 +228,21 @@ tests.test_get_inputs(get_inputs)
 # 
 # Return the cell and initial state in the following tuple `(Cell, InitialState)`
 
-# In[9]:
+# In[25]:
 
 
-def get_init_cell(batch_size, rnn_size):
+def get_init_cell(batch_size, rnn_size,n_layers=2):
     """
     Create an RNN Cell and initialize it.
     :param batch_size: Size of batches
     :param rnn_size: Size of RNNs
     :return: Tuple (cell, initialize state)
     """
-    cell = tf.contrib.rnn.BasicLSTMCell(rnn_size)
-    cell = tf.contrib.rnn.MultiRNNCell([cell])
+    
+    def make_lstm(rnn_size):
+        return tf.contrib.rnn.BasicLSTMCell(rnn_size)
+    
+    cell = tf.contrib.rnn.MultiRNNCell([ make_lstm(rnn_size) for _ in range(n_layers)])
     initialize_state = cell.zero_state(batch_size,tf.float32)
     initialize_state = tf.identity(initialize_state,name="initial_state")
     # TODO: Implement Function
@@ -254,7 +258,7 @@ tests.test_get_init_cell(get_init_cell)
 # ### Word Embedding
 # Apply embedding to `input_data` using TensorFlow.  Return the embedded sequence.
 
-# In[10]:
+# In[26]:
 
 
 def get_embed(input_data, vocab_size, embed_dim):
@@ -265,7 +269,7 @@ def get_embed(input_data, vocab_size, embed_dim):
     :param embed_dim: Number of embedding dimensions
     :return: Embedded input.
     """
-    embedded_input = embedding = tf.Variable(tf.random_uniform((vocab_size,embed_dim),-1,1))
+    embedded_input = tf.Variable(tf.random_uniform((vocab_size,embed_dim),-1,1))
     embed = tf.nn.embedding_lookup(embedded_input,input_data)
     # TODO: Implement Function
     return embed
@@ -284,7 +288,7 @@ tests.test_get_embed(get_embed)
 # 
 # Return the outputs and final_state state in the following tuple `(Outputs, FinalState)` 
 
-# In[11]:
+# In[27]:
 
 
 def build_rnn(cell, inputs):
@@ -316,7 +320,7 @@ tests.test_build_rnn(build_rnn)
 # 
 # Return the logits and final state in the following tuple (Logits, FinalState) 
 
-# In[12]:
+# In[28]:
 
 
 def build_nn(cell, rnn_size, input_data, vocab_size, embed_dim):
@@ -333,7 +337,7 @@ def build_nn(cell, rnn_size, input_data, vocab_size, embed_dim):
     
     outputs, final_state = build_rnn(cell,embed)
         
-    logits = tf.contrib.layers.fully_connected(outputs, vocab_size, activation_fn=tf.sigmoid, weights_initializer=tf.truncated_normal_initializer(stddev=0.1))
+    logits = tf.contrib.layers.fully_connected(outputs, vocab_size, activation_fn=None, weights_initializer=tf.truncated_normal_initializer(stddev=0.1))
     
     # TODO: Implement Function
     return logits, final_state
@@ -373,7 +377,7 @@ tests.test_build_nn(build_nn)
 # ]
 # ```
 
-# In[13]:
+# In[29]:
 
 
 
@@ -394,7 +398,7 @@ def get_batches(int_text, batch_size, seq_length):
         batche_target = []
         for j in range(batch_size):
             #Batch of Input
-            start = i * seq_length + j * 2 * seq_length 
+            start = i * seq_length + j * number_of_batches * seq_length 
             end = start + seq_length
             batche_input.append(int_text[start:end])
             #Batch of targets
@@ -424,21 +428,21 @@ tests.test_get_batches(get_batches)
 # - Set `learning_rate` to the learning rate.
 # - Set `show_every_n_batches` to the number of batches the neural network should print progress.
 
-# In[14]:
+# In[34]:
 
 
 # Number of Epochs
-num_epochs = 10
+num_epochs = 150
 # Batch Size
-batch_size = 256
+batch_size = 128
 # RNN Size
-rnn_size = 10
+rnn_size = 512
 # Embedding Dimension Size
-embed_dim = 512
+embed_dim = 200
 # Sequence Length
-seq_length = 100
+seq_length = 20
 # Learning Rate
-learning_rate = 0.001
+learning_rate = 0.005
 # Show stats for every n number of batches
 show_every_n_batches = 5
 
@@ -451,7 +455,7 @@ save_dir = './save'
 # ### Build the Graph
 # Build the graph using the neural network you implemented.
 
-# In[15]:
+# In[35]:
 
 
 """
@@ -488,7 +492,7 @@ with train_graph.as_default():
 # ## Train
 # Train the neural network on the preprocessed data.  If you have a hard time getting a good loss, check the [forms](https://discussions.udacity.com/) to see if anyone is having the same problem.
 
-# In[16]:
+# In[36]:
 
 
 """
@@ -526,7 +530,7 @@ with tf.Session(graph=train_graph) as sess:
 # ## Save Parameters
 # Save `seq_length` and `save_dir` for generating a new TV script.
 
-# In[17]:
+# In[37]:
 
 
 """
@@ -538,7 +542,7 @@ helper.save_params((seq_length, save_dir))
 
 # # Checkpoint
 
-# In[18]:
+# In[38]:
 
 
 """
@@ -563,7 +567,7 @@ seq_length, load_dir = helper.load_params()
 # 
 # Return the tensors in the following tuple `(InputTensor, InitialStateTensor, FinalStateTensor, ProbsTensor)` 
 
-# In[19]:
+# In[39]:
 
 
 def get_tensors(loaded_graph):
@@ -589,7 +593,7 @@ tests.test_get_tensors(get_tensors)
 # ### Choose Word
 # Implement the `pick_word()` function to select the next word using `probabilities`.
 
-# In[20]:
+# In[40]:
 
 
 import random
@@ -621,7 +625,7 @@ tests.test_pick_word(pick_word)
 # ## Generate TV Script
 # This will generate the TV script for you.  Set `gen_length` to the length of TV script you want to generate.
 
-# In[21]:
+# In[41]:
 
 
 gen_length = 200
