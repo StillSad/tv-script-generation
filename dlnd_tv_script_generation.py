@@ -542,7 +542,7 @@ helper.save_params((seq_length, save_dir))
 
 # # Checkpoint
 
-# In[38]:
+# In[1]:
 
 
 """
@@ -567,7 +567,7 @@ seq_length, load_dir = helper.load_params()
 # 
 # Return the tensors in the following tuple `(InputTensor, InitialStateTensor, FinalStateTensor, ProbsTensor)` 
 
-# In[39]:
+# In[2]:
 
 
 def get_tensors(loaded_graph):
@@ -593,7 +593,7 @@ tests.test_get_tensors(get_tensors)
 # ### Choose Word
 # Implement the `pick_word()` function to select the next word using `probabilities`.
 
-# In[40]:
+# In[7]:
 
 
 import random
@@ -605,12 +605,11 @@ def pick_word(probabilities, int_to_vocab):
     :param int_to_vocab: Dictionary of word ids as the keys and words as the values
     :return: String of the predicted word
     """
-
-    probabilities = pow(probabilities - random.random(),2)
-    minP = min(probabilities)
+    
+    maxP = max(probabilities)
     next_word = ""
-    for ii, probabilitie in enumerate(probabilities, 1):
-        if minP == probabilitie:
+    for ii, probabilitie in enumerate(probabilities, 0):
+        if maxP == probabilitie:
             next_word = int_to_vocab[ii]
             break
   
@@ -625,7 +624,7 @@ tests.test_pick_word(pick_word)
 # ## Generate TV Script
 # This will generate the TV script for you.  Set `gen_length` to the length of TV script you want to generate.
 
-# In[41]:
+# In[8]:
 
 
 gen_length = 200

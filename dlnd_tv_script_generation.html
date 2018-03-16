@@ -13553,7 +13553,7 @@ Model Trained and Saved
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[38]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
@@ -13591,7 +13591,7 @@ Model Trained and Saved
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[39]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_tensors</span><span class="p">(</span><span class="n">loaded_graph</span><span class="p">):</span>
@@ -13648,7 +13648,7 @@ Model Trained and Saved
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[40]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>
@@ -13660,12 +13660,11 @@ Model Trained and Saved
 <span class="sd">    :param int_to_vocab: Dictionary of word ids as the keys and words as the values</span>
 <span class="sd">    :return: String of the predicted word</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">probabilities</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="n">probabilities</span> <span class="o">-</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(),</span><span class="mi">2</span><span class="p">)</span>
-    <span class="n">minP</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span>
+    
+    <span class="n">maxP</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span>
     <span class="n">next_word</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">probabilitie</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">probabilities</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">minP</span> <span class="o">==</span> <span class="n">probabilitie</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">probabilitie</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">probabilities</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">maxP</span> <span class="o">==</span> <span class="n">probabilitie</span><span class="p">:</span>
             <span class="n">next_word</span> <span class="o">=</span> <span class="n">int_to_vocab</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span>
             <span class="k">break</span>
   
@@ -13711,7 +13710,7 @@ Model Trained and Saved
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[41]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">gen_length</span> <span class="o">=</span> <span class="mi">200</span>
@@ -13774,7 +13773,22 @@ Model Trained and Saved
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>moe_szyslak: kinda ha scrutinizing inside pointedly panicked three panicked panicked panicked panicked successful scully inside panicked scrutinizing panicked aw inside pointedly inside panicked banquo panicked dentist panicked panicked literary hates panicked panicked panicked scrutinizing panicked panicked panicked panicked panicked scrutinizing panicked panicked scrutinizing panicked scrutinizing pointedly inside pointedly inside inside three zoomed inside cloudy spy panicked chubby panicked successful fresco panicked dentist panicked successful inside inside inside panicked chubby inside inside panicked scrutinizing inside panicked zoomed klingon dentist panicked boston klingon or typed end bowled end lard inside panicked successful defected panicked passed panicked panicked scrutinizing inside inside panicked banquo panicked adequate panicked panicked panicked zoomed scrutinizing panicked scrutinizing panicked panicked literary inside inside panicked zoomed smithers inside pointedly pointedly inside inside inside panicked zoomed inside inside panicked aw booger chubby panicked inside panicked inside cloudy boston panicked dentist panicked klingon boston klingon weary told end told johnny_carson: inside pointedly pointedly pointedly pointedly cloudy inside inside panicked banquo inside panicked panicked panicked adequate inside panicked zoomed scrutinizing or dentist panicked panicked panicked panicked panicked scrutinizing panicked adequate panicked scrutinizing panicked panicked panicked scrutinizing scrutinizing panicked scrutinizing scrutinizing inside pointedly panicked banquo panicked adequate pointedly inside panicked adequate panicked panicked banquo pointedly
+<pre>moe_szyslak:(into phone) gotcha ya down for forty bucks. good luck your eminence.
+moe_szyslak: sorry, homer.
+homer_simpson:(looking at watch) ah. finished with fifteen seconds to you.
+kent_brockman:(to self) she&#39;s your lenny_leonard: that&#39;s so i&#39;ll be thankful to michael, but i am.
+moe_szyslak: uh, what are you gonna do with the money, homer?
+homer_simpson: not a thing in the bar!
+moe_szyslak: come on!
+homer_simpson: how about you, lenny?
+lenny_leonard:(nods) mm hmm. the team&#39;s been terrible, because we never have barney again.
+moe_szyslak:(shakes out) hey, moe.
+moe_szyslak:(quickly) hey, hey, hey!(no rhyme) this is a great neck is right to me.
+moe_szyslak:(covering) uh-oh. you&#39;re at moe.
+moe_szyslak: i wouldn&#39;t-a had none of this without you, kid.
+moe_szyslak:(turning on a dime) mayor quimby?!
+moe_szyslak: i&#39;ll take it...
+homer_simpson:(excited)
 </pre>
 </div>
 </div>
